@@ -1,3 +1,9 @@
-﻿@using MvcPelisFinalAWS
+﻿@inject IConfiguration configuration
+
+@{
+    string UrlBucket = configuration.GetValue<string>("AWS:S3BucketUrl");
+}
+
+@using MvcPelisFinalAWS
 @using MvcPelisFinalAWS.Models
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

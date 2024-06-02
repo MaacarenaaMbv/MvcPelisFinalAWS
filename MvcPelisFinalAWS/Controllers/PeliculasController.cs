@@ -7,14 +7,18 @@ namespace MvcPelisFinalAWS.Controllers
     public class PeliculasController : Controller
     {
         private ServiceApiPeliculas service;
-        public PeliculasController(ServiceApiPeliculas service)
+        private ServiceStorageAWS serviceStorage;
+
+        public PeliculasController(ServiceApiPeliculas service, ServiceStorageAWS serviceStorage)
         {
             this.service = service;
+            this.serviceStorage = serviceStorage;
         }
 
         public async Task<IActionResult> Index()
         {
-            List<Pelicula> peliculas = await this.service.GetPeliculasAsync();
+            List<Pelicula> peliculas =
+                await this.service.GetPeliculasAsync();
             return View(peliculas);
         }
 
@@ -26,7 +30,9 @@ namespace MvcPelisFinalAWS.Controllers
         [HttpPost]
         public async Task<IActionResult> PeliculasActor(string actor)
         {
-            List<Pelicula> peliculas = await this.service.GetPeliculasActoresAsync(actor);
+            List<Pelicula> peliculas =
+                await this.service
+                .GetPeliculasActoresAsync(actor);
             return View(peliculas);
         }
 
@@ -42,8 +48,13 @@ namespace MvcPelisFinalAWS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Pelicula pelicula)
+        public async Task<IActionResult> Create(Pelicula pelicula, IFormFile file)
         {
+            pelicula.Foto = file.FileName;
+            using (Stream stream = file.OpenReadStream())
+            {
+                await this.serviceStorage.UploadFileAsync(file.FileName, stream);
+            }
             await this.service.CreatePeliculaAsync(pelicula);
             return RedirectToAction("Index");
         }
@@ -66,7 +77,7 @@ namespace MvcPelisFinalAWS.Controllers
             await this.service.DeletePeliculaAsync(id);
             return RedirectToAction("Index");
         }
-
     }
+
 
 }
