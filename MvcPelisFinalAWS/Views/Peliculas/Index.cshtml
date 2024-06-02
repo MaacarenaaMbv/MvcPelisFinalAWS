@@ -1,6 +1,7 @@
 ﻿@model List<Pelicula>
+
 @{
-    string UrlBucket = configuration.GetValue<string>("AWS:S3BucketUrl");
+    string UrlBucket = KeysModel.BucketUrl;
 }
 
 <h1>Peliculas AWS Api Gateway</h1>
@@ -8,7 +9,7 @@
 <p>
     <a asp-controller="Peliculas"
        asp-action="Create">Create New</a> |
-    <a asp-controller="Peliculas"
+    <a asp-controller="Peliculas" s
        asp-action="PeliculasActor">Buscar películas</a>
 </p>
 <table class="table table-bordered">
@@ -25,8 +26,7 @@
             <tr>
                 <td>@peli.Titulo</td>
                 <td>
-                    <img src="@UrlBucket@peli.Foto"
-                         style="width:70px; height: 80px" />
+                    <img src="@UrlBucket@peli.Foto" class="card-img-top" alt="..." style="width:70px; height: 80px" />>
                 </td>
                 <td>
                     <a asp-controller="Peliculas"

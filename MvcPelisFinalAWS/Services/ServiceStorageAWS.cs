@@ -1,5 +1,6 @@
 ﻿using Amazon.S3.Model;
 using Amazon.S3;
+using MvcPelisFinalAWS.Models;
 
 namespace MvcPelisFinalAWS.Services
 {
@@ -8,17 +9,14 @@ namespace MvcPelisFinalAWS.Services
         private IAmazonS3 client;
         private string BucketName;
 
-        public ServiceStorageAWS(IConfiguration configuration, IAmazonS3 client)
+        public ServiceStorageAWS(KeysModel keys, IAmazonS3 client)
         {
-            this.BucketName = configuration.GetValue<string>("AWS:S3BucketName");
+            this.BucketName = keys.BucketName;
             this.client = client;
         }
 
-
-
         //METODO PARA SUBIR LAS IMAGENES DONDE NECESITAMOS 
         //EL NOMBRE DE LA IMAGEN, EL STREAM, EL BUCKET NAME 
-
         public async Task<bool> UploadFileAsync(string fileName, Stream stream)
         {
             PutObjectRequest request = new PutObjectRequest
@@ -27,7 +25,9 @@ namespace MvcPelisFinalAWS.Services
                 Key = fileName,
                 BucketName = this.BucketName
             };
+
             PutObjectResponse response = await this.client.PutObjectAsync(request);
+
             if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
             {
                 return true;
@@ -36,7 +36,9 @@ namespace MvcPelisFinalAWS.Services
             {
                 return false;
             }
+
         }
 
     }
+
 }
